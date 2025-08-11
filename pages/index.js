@@ -4,7 +4,7 @@ export default function Home() {
   const [countdown, setCountdown] = useState('');
 
   useEffect(() => {
-    const target = new Date('2025-08-10T18:00:00Z');
+    const target = new Date('2025-08-12T18:00:00Z');
     const timer = setInterval(() => {
       const now = new Date();
       const diff = target - now;
