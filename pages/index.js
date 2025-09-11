@@ -1,3 +1,6 @@
+// ================================================
+// FILE: pages/index.js  (Pages Router, JavaScript)
+// ================================================
 "use client";
 
 import React, { useEffect, useState } from "react";
