@@ -1,7 +1,3 @@
-// ================================================
-// FILE: components/ui/button.jsx
-// Minimal button component
-// ================================================
 import React from "react";
 export function Button({ className = "", variant = "default", size = "md", children, ...props }) {
   const base = "inline-flex items-center justify-center whitespace-nowrap font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none";
