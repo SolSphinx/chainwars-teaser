@@ -6,13 +6,13 @@
 import React, { useEffect, useState } from "react";
 import Head from "next/head";
 import { motion } from "framer-motion";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Switch } from "@/components/ui/switch";
+import { Button } from "../components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
+import { Badge } from "../components/ui/badge";
+import { Input } from "../components/ui/input";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../components/ui/dialog";
+import { Switch } from "../components/ui/switch";
 import { Share2, Twitter, Lock, Unlock, Info, Sparkles, Shield, Swords, BarChart3 } from "lucide-react";
 import { nextMilestoneProgress, sumMarketcapBySide, isPlaceholderMint } from "../lib/helpers";
 
@@ -137,10 +137,7 @@ const DEFAULT_ROSTER = {
   ],
 };
 
-function loadRoster() {
-  if (typeof window === "undefined") return DEFAULT_ROSTER;
-  try { const raw = localStorage.getItem(ROSTER_KEY); if (!raw) return DEFAULT_ROSTER; const parsed = JSON.parse(raw); return { guardians: Array.isArray(parsed.guardians) ? parsed.guardians : DEFAULT_ROSTER.guardians, nulls: Array.isArray(parsed.nulls) ? parsed.nulls : DEFAULT_ROSTER.nulls }; } catch { return DEFAULT_ROSTER; }
-}
+function loadRoster() { if (typeof window === "undefined") return DEFAULT_ROSTER; try { const raw = localStorage.getItem(ROSTER_KEY); if (!raw) return DEFAULT_ROSTER; const parsed = JSON.parse(raw); return { guardians: Array.isArray(parsed.guardians) ? parsed.guardians : DEFAULT_ROSTER.guardians, nulls: Array.isArray(parsed.nulls) ? parsed.nulls : DEFAULT_ROSTER.nulls }; } catch { return DEFAULT_ROSTER; } }
 function saveRoster(roster) { try { if (typeof window !== "undefined") localStorage.setItem(ROSTER_KEY, JSON.stringify(roster)); } catch {} }
 
 function Character({ name, side, locked, teaser, editMode, onRename }) {
