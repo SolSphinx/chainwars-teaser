@@ -1,11 +1,7 @@
-// ================================================
-// FILE: pages/index.js  (Pages Router, JavaScript)
-// ================================================
 "use client";
 
 import React, { useEffect, useState } from "react";
 import Head from "next/head";
-import { motion } from "framer-motion";
 import { Button } from "../components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
 import { Badge } from "../components/ui/badge";
@@ -57,7 +53,7 @@ async function fetchPumpStats(mint) {
 function Hero() {
   return (
     <div className="relative overflow-hidden bg-gradient-to-br from-purple-900/40 via-indigo-900/40 to-slate-900/40 rounded-3xl border border-white/10 p-6 md:p-10 mb-8">
-      <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
+      <div>
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
           <div>
             <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight">ChainWars Command Center</h1>
@@ -73,7 +69,7 @@ function Hero() {
             <a href="#tokens"><Button variant="outline" className="rounded-2xl">Tokens</Button></a>
           </div>
         </div>
-      </motion.div>
+      </div>
     </div>
   );
 }
