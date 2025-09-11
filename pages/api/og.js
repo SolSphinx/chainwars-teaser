@@ -1,4 +1,4 @@
-export const config = { runtime: 'edge' }
+export const config = { runtime: "edge" }
 import { ImageResponse } from "next/server";
 
 export default function handler(req) {
