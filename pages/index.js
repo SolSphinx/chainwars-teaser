@@ -1,5 +1,5 @@
 // ================================================
-// FILE: pages/index.js  (Pages Router, JavaScript)
+// FILE: pages/index.js  (Pages Router, JavaScript)  
 // ================================================
 "use client";
 
