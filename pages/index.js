@@ -50,10 +50,12 @@ const Section = ({ id, title, icon, className, subtitle, children, colored = fal
 async function fetchPumpStats(mint) {
   if (!mint || isPlaceholderMint(mint)) return null;
   try {
-    const res = await fetch(`/api/pump?source=dexscreener&mint=${encodeURIComponent(mint)`, { cache: "no-store" });
+    const res = await fetch(`/api/pump?source=dexscreener&mint=${encodeURIComponent(mint)}`, { cache: "no-store" });
     if (!res.ok) return null;
     return await res.json();
-  } catch { return null; }
+  } catch {
+    return null;
+  }
 }
 
 function Hero() {
