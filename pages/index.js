@@ -19,9 +19,13 @@ import { nextMilestoneProgress, sumMarketcapBySide, isPlaceholderMint } from "..
 const PUMP_BASE = "https://pump.fun";
 const FETCH_LIVE = process.env.NEXT_PUBLIC_FETCH_MARKETCAP === "true";
 const SOLAK_MINT = "CMZULfrynZSyhmfRfFLZB6XXBbCwzvuGathVE2UTpump";
+function normalizeMint(mint){
+  if (!mint) return mint;
+  return mint.endsWith("pump") ? mint.slice(0, -4) : mint;
+}
 
 const INITIAL_TOKENS = [
-  { symbol: "$SOLAK", address: SOLAK_MINT, status: "live", side: "good", pumpUrl: `${PUMP_BASE}/${SOLAK_MINT}`, dexUrl: `https://dexscreener.com/solana/${SOLAK_MINT}`, hidden: false },
+  { symbol: "$SOLAK", address: SOLAK_MINT, status: "live", side: "good", pumpUrl: `${PUMP_BASE}/${SOLAK_MINT}`, dexUrl: `https://dexscreener.com/solana/${normalizeMint(SOLAK_MINT)}`, hidden: false },
   { symbol: "Coming up...", address: "CENTRA_MINT_PLACEHOLDER", status: "coming", side: "dark", pumpUrl: `${PUMP_BASE}`, hidden: false },
   { symbol: "$AURORA", address: "AURORA_MINT_PLACEHOLDER", status: "locked", side: "good", pumpUrl: `${PUMP_BASE}`, hidden: true },
   { symbol: "$BSMITH", address: "BSMITH_MINT_PLACEHOLDER", status: "locked", side: "good", pumpUrl: `${PUMP_BASE}`, hidden: true },
@@ -50,7 +54,7 @@ const Section = ({ id, title, icon, className, subtitle, children, colored = fal
 async function fetchPumpStats(mint) {
   if (!mint || isPlaceholderMint(mint)) return null;
   try {
-    const res = await fetch(`/api/pump?source=dexscreener&mint=${encodeURIComponent(mint)}`, { cache: "no-store" });
+    const res = await fetch(`/api/pump?source=dexscreener&mint=${encodeURIComponent(normalizeMint(mint))}`, { cache: "no-store" });
     if (!res.ok) return null;
     return await res.json();
   } catch {
