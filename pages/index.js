@@ -13,6 +13,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../components/ui/dialog";
 import { Switch } from "../components/ui/switch";
 import { Share2, Twitter, Lock, Unlock, Info, Sparkles, Shield, Swords, BarChart3 } from "lucide-react";
+import XFeed from "../components/social/XFeed";
 import { nextMilestoneProgress, sumMarketcapBySide, isPlaceholderMint } from "../lib/helpers";
 
 const PUMP_BASE = "https://pump.fun";
