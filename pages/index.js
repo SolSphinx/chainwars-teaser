@@ -21,7 +21,7 @@ const FETCH_LIVE = process.env.NEXT_PUBLIC_FETCH_MARKETCAP === "true";
 
 const INITIAL_TOKENS = [
   { symbol: "$SOLAK", address: "SOLAK_MINT_PLACEHOLDER", status: "live", side: "good", pumpUrl: `${PUMP_BASE}`, dexUrl: "https://dexscreener.com/solana", hidden: false },
-  { symbol: "$CENTRA", address: "CENTRA_MINT_PLACEHOLDER", status: "coming", side: "dark", pumpUrl: `${PUMP_BASE}`, hidden: false },
+  { symbol: "Coming up...", address: "CENTRA_MINT_PLACEHOLDER", status: "coming", side: "dark", pumpUrl: `${PUMP_BASE}`, hidden: false },
   { symbol: "$AURORA", address: "AURORA_MINT_PLACEHOLDER", status: "locked", side: "good", pumpUrl: `${PUMP_BASE}`, hidden: true },
   { symbol: "$BSMITH", address: "BSMITH_MINT_PLACEHOLDER", status: "locked", side: "good", pumpUrl: `${PUMP_BASE}`, hidden: true },
   { symbol: "$STAR", address: "STAR_MINT_PLACEHOLDER", status: "locked", side: "good", pumpUrl: `${PUMP_BASE}`, hidden: true },
@@ -32,16 +32,17 @@ const INITIAL_TOKENS = [
   { symbol: "$GPHANTOM", address: "GPHANTOM_MINT_PLACEHOLDER", status: "locked", side: "dark", pumpUrl: `${PUMP_BASE}`, hidden: true },
 ];
 
-const Section = ({ id, title, icon, className, subtitle, children }) => (
+const Section = ({ id, title, icon, className, subtitle, children, colored = false }) => (
   <section id={id} className={`w-full max-w-6xl mx-auto px-4 md:px-6 ${className ?? ""}`}>
-    <div className="flex items-end justify-between gap-4 mb-4">
-      <div>
-        <h2 className="text-2xl md:text-3xl font-bold flex items-center gap-2">{icon}{title}</h2>
-        {subtitle && <p className="text-sm opacity-80 mt-1">{subtitle}</p>}
+    <div className={colored ? "relative overflow-hidden bg-gradient-to-br from-purple-900/25 via-indigo-900/25 to-slate-900/25 rounded-3xl border border-white/10 p-4 md:p-6" : ""}>
+      <div className="flex items-end justify-between gap-4 mb-4">
+        <div>
+          <h2 className="text-2xl md:text-3xl font-bold flex items-center gap-2">{icon}{title}</h2>
+          {subtitle && <p className="text-sm opacity-80 mt-1">{subtitle}</p>}
+        </div>
       </div>
-      <div className="hidden md:flex items-center gap-2"><Badge variant="secondary">v2 Additions</Badge></div>
+      {children}
     </div>
-    {children}
   </section>
 );
 
@@ -65,7 +66,7 @@ function Hero() {
             <div className="mt-4 flex flex-wrap items-center gap-2">
               <Badge className="bg-purple-600/40">SolaKnight featured</Badge>
               <Badge variant="outline">$SOLAK live</Badge>
-              <Badge variant="secondary">$CENTRA coming soon</Badge>
+              <Badge variant="secondary">Coming up...</Badge>
             </div>
           </div>
           <div className="flex items-center gap-3">
@@ -111,7 +112,7 @@ function TokensSection({ onTotals }) {
     }
   })(); }, []);
   return (
-    <Section id="tokens" title="Tokens" icon={<Sparkles className="w-6 h-6" />} subtitle="Live and upcoming tokens in the ChainWars saga.">
+    <Section id="tokens"$1 colored>} subtitle="Live and upcoming tokens in the ChainWars saga.">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">{tokens.filter((t) => !t.hidden).map((t) => <TokenCard key={t.symbol} t={t} />)}</div>
     </Section>
   );
@@ -163,7 +164,7 @@ function LineupsSection() {
   const rename = (side, id, newName) => { setRoster((prev) => { const next = { ...prev, [side]: prev[side].map((c) => c.id === id ? { ...c, name: newName } : c) }; saveRoster(next); return next; }); };
   const reset = () => { setRoster(DEFAULT_ROSTER); saveRoster(DEFAULT_ROSTER); };
   return (
-    <Section id="lineups" title="Lineups" icon={<Info className="w-6 h-6"/>} subtitle="Locked/unlocked logic with detail modals and inline renaming.">
+    <Section id="lineups"$1 colored>} subtitle="Locked/unlocked logic with detail modals and inline renaming.">
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2 text-sm"><span>Edit names</span><Switch checked={editMode} onCheckedChange={setEditMode}/></div>
         {editMode && (<div className="flex items-center gap-2"><Button size="sm" variant="outline" className="rounded-xl" onClick={reset}>Reset to defaults</Button></div>)}
@@ -179,7 +180,7 @@ function LineupsSection() {
 
 function MilestonesSection() {
   return (
-    <Section id="milestones" title="Marketcap" icon={<Swords className="w-6 h-6"/>} subtitle="">
+    <Section id="milestones"$1 colored>} subtitle="">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Card className="rounded-2xl"><CardHeader><CardTitle className="flex items-center gap-2"><Shield className="w-5 h-5"/> ChainGuardians</CardTitle></CardHeader><CardContent><div className="text-2xl font-bold tracking-tight">Marketcap XXX</div><p className="text-xs opacity-70 mt-1">Milestones hidden for now.</p></CardContent></Card>
         <Card className="rounded-2xl"><CardHeader><CardTitle className="flex items-center gap-2"><Lock className="w-5 h-5"/> The Null Order</CardTitle></CardHeader><CardContent><div className="text-2xl font-bold tracking-tight">Marketcap XXX</div><p className="text-xs opacity-70 mt-1">Milestones hidden for now.</p></CardContent></Card>
@@ -191,11 +192,11 @@ function MilestonesSection() {
 function SocialSection({ guardiansTotal, nullTotal }) {
   const siteUrl = typeof window !== "undefined" ? window.location.origin : "";
   const guardiansOg = `/api/og?title=ChainWars%20Command%20Center&subtitle=%24SOLAK%20live&side=Guardians&progress=${nextMilestoneProgress(guardiansTotal)}`;
-  const nullOg = `/api/og?title=ChainWars%20Command%20Center&subtitle=%24CENTRA%20coming%20soon&side=Null%20Order&progress=${nextMilestoneProgress(nullTotal)}`;
+  const nullOg = `/api/og?title=ChainWars%20Command%20Center&subtitle=Coming%20up...&side=Null%20Order&progress=${nextMilestoneProgress(nullTotal)}`;
   return (
     <Section id="social" title="Social & Feed" icon={<Twitter className="w-6 h-6"/>} subtitle="X embed and share composer.">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <Card className="rounded-2xl"><CardHeader><CardTitle>X Feed</CardTitle></CardHeader><CardContent><XFeed username="chainwarsfun" height={520} theme="dark" tweetLimit={5} /></CardContent></Card>
+        <Card className="rounded-2xl"><CardHeader><CardTitle>X Feed</CardTitle></CardHeader><CardContent><XFeed username="SolSphinx" height={520} theme="dark" tweetLimit={5} /></CardContent></Card>
         <Card className="rounded-2xl"><CardHeader><CardTitle>Share</CardTitle></CardHeader><CardContent className="space-y-3"><Input id="shareText" defaultValue={`ChainWars ⚔️ $SOLAK live — follow the battle:`} /><div className="flex gap-2"><Button className="rounded-xl" onClick={() => { const input = document.getElementById("shareText"); const text = input && "value" in input ? input.value : ""; const url = new URL("https://twitter.com/intent/tweet"); url.searchParams.set("text", text); url.searchParams.set("url", siteUrl); window.open(url.toString(), "_blank"); }}><Share2 className="w-4 h-4 mr-2"/> Compose</Button><Button variant="outline" className="rounded-xl" onClick={() => { const input = document.getElementById("shareText"); const text = input && "value" in input ? input.value : ""; navigator.clipboard.writeText(text); }}>Copy</Button></div><div className="text-xs opacity-80"><p className="mb-1">OG preview links:</p><ul className="list-disc pl-4 space-y-1"><li><a className="underline" href={guardiansOg} target="_blank" rel="noreferrer">Guardians OG card</a></li><li><a className="underline" href={nullOg} target="_blank" rel="noreferrer">Null Order OG card</a></li></ul></div></CardContent></Card>
       </div>
     </Section>
@@ -212,7 +213,7 @@ function CommandCenterPage() {
   return (
     <main className="min-h-screen w-full py-6 md:py-10">
       <div className="w-full max-w-6xl mx-auto px-4 md:px-6">
-        <div className="flex items-center justify-end gap-3 mb-4"><div className="flex items-center gap-2 text-xs"><span>Audio</span><Switch checked={audioOn} onCheckedChange={setAudioOn} /></div></div>
+        </div>
         <Hero />
       </div>
       <div className="space-y-10">
