@@ -18,7 +18,7 @@ import { nextMilestoneProgress, sumMarketcapBySide, isPlaceholderMint } from "..
 
 const PUMP_BASE = "https://pump.fun";
 const FETCH_LIVE = process.env.NEXT_PUBLIC_FETCH_MARKETCAP === "true";
-const SOLAK_MINT = "CMZULfrynZSyhmfRfFLZB6XXBbCwzvuGathVE2UT";
+const SOLAK_MINT = "CMZULfrynZSyhmfRfFLZB6XXBbCwzvuGathVE2UTpump";
 
 const INITIAL_TOKENS = [
   { symbol: "$SOLAK", address: SOLAK_MINT, status: "live", side: "good", pumpUrl: `${PUMP_BASE}/${SOLAK_MINT}`, dexUrl: `https://dexscreener.com/solana/${SOLAK_MINT}`, hidden: false },
