@@ -1,4 +1,8 @@
-export const config = { runtime: "edge" }
+// ================================================
+// FILE: pages/api/og.js  (Pages Router, JS)
+// NOTE: in your real repo, rename `ogConfig` → `config` for edge runtime.
+// ================================================
+export const ogConfig = { runtime: "edge" };
 import { ImageResponse } from "next/server";
 
 export default function handler(req) {
@@ -20,7 +24,7 @@ export default function handler(req) {
         <div style={{ fontSize: 28, opacity: 0.9 }}>{subtitle}</div>
         <div style={{ display: "flex", gap: 12, alignItems: "center" }}>{side ? badge(side) : null}{typeof pct === "number" ? badge(`${pct}% to next milestone`) : null}</div>
       </div>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}><div style={{ display: "flex", gap: 12 }}>{badge("$SOLAK live")}{badge("$CENTRA coming soon")}</div><div style={{ fontSize: 22, opacity: 0.8 }}>chainguardians vs the null order</div></div>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}><div style={{ display: "flex", gap: 12 }}>{badge("$SOLAK live")}{badge("Coming up...")}</div><div style={{ fontSize: 22, opacity: 0.8 }}>chainguardians vs the null order</div></div>
       <div style={{ position: "absolute", right: -120, top: -120, width: 360, height: 360, borderRadius: 9999, border: "2px solid rgba(255,255,255,0.15)", background: "radial-gradient(circle, rgba(167,139,250,0.25), transparent)", filter: "blur(1px)" }} />
     </div>
   ), { width: 1200, height: 630 });
