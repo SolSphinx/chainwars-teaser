@@ -18,14 +18,11 @@ import { nextMilestoneProgress, sumMarketcapBySide, isPlaceholderMint } from "..
 
 const PUMP_BASE = "https://pump.fun";
 const FETCH_LIVE = process.env.NEXT_PUBLIC_FETCH_MARKETCAP === "true";
-const SOLAK_MINT = "CMZULfrynZSyhmfRfFLZB6XXBbCwzvuGathVE2UTpump";
-function normalizeMint(mint){
-  if (!mint) return mint;
-  return mint.endsWith("pump") ? mint.slice(0, -4) : mint;
-}
+const SOLAK_MINT = "4zwdqjxkadmuh9bhkmqfu8d1rh7trdtghgw7uqf2hwpm";
+
 
 const INITIAL_TOKENS = [
-  { symbol: "$SOLAK", address: SOLAK_MINT, status: "live", side: "good", pumpUrl: `${PUMP_BASE}/${SOLAK_MINT}`, dexUrl: `https://dexscreener.com/solana/${normalizeMint(SOLAK_MINT)}`, hidden: false },
+  { symbol: "$SOLAK", address: SOLAK_MINT, status: "live", side: "good", pumpUrl: `${PUMP_BASE}/${SOLAK_MINT}`, dexUrl: `https://dexscreener.com/solana/${SOLAK_MINT}`, hidden: false },
   { symbol: "Coming up...", address: "CENTRA_MINT_PLACEHOLDER", status: "coming", side: "dark", pumpUrl: `${PUMP_BASE}`, hidden: false },
   { symbol: "$AURORA", address: "AURORA_MINT_PLACEHOLDER", status: "locked", side: "good", pumpUrl: `${PUMP_BASE}`, hidden: true },
   { symbol: "$BSMITH", address: "BSMITH_MINT_PLACEHOLDER", status: "locked", side: "good", pumpUrl: `${PUMP_BASE}`, hidden: true },
@@ -54,7 +51,7 @@ const Section = ({ id, title, icon, className, subtitle, children, colored = fal
 async function fetchPumpStats(mint) {
   // Fetch directly from Dexscreener on the client to avoid API route/runtime issues.
   if (!mint || isPlaceholderMint(mint)) return null;
-  const candidates = Array.from(new Set([mint, normalizeMint(mint)]));
+  const candidates = [mint];
   for (const m of candidates) {
     try {
       const res = await fetch(`https://api.dexscreener.com/latest/dex/tokens/${encodeURIComponent(m)}`, { cache: "no-store" });
@@ -162,7 +159,7 @@ function Character({ name, side, locked, teaser, editMode, onRename }) {
       <CardContent>
         <Dialog>
           <DialogTrigger asChild><Button variant="outline" className="rounded-xl w-full">{editMode ? "Preview details" : locked ? "Locked" : "View details"}</Button></DialogTrigger>
-          <DialogContent className="max-w-lg"><DialogHeader><DialogTitle className="flex items-center justify-between"><span>{publicName}</span><Badge variant={side === "good" ? "default" : "secondary"}>{side === "good" ? "ChainGuardian" : "Null Order"}</Badge></DialogTitle></DialogHeader><div className="space-y-3 text-sm"><p className="opacity-80">{publicTeaser}</p><div className="p-3 rounded-xl bg-muted/50 border text-xs"><p className="font-semibold mb-1">Unlock hint</p><p>Complete the next milestone to reveal this lore.</p></div></div></DialogContent>
+          <DialogContent className="max-w-lg"><DialogHeader><DialogTitle className="flex items-center justify-between"><span>{publicName}</span><Badge variant={side === "good" ? "default" : "secondary"}>{side === "good" ? "ChainGuardian" : "Null Order"}</Badge></DialogTitle></DialogHeader><div className="space-y-3 text-sm"><p className="opacity-80">{publicTeaser}</p><div className="p-3 rounded-xl bg-white/5 border border-white/10 text-xs"><p className="font-semibold mb-1">Unlock hint</p><p>Complete the next milestone to reveal this lore.</p></div></div></DialogContent>
         </Dialog>
       </CardContent>
     </Card>
