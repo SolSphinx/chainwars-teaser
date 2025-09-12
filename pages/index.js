@@ -18,7 +18,7 @@ import { nextMilestoneProgress, sumMarketcapBySide, isPlaceholderMint } from "..
 
 const PUMP_BASE = "https://pump.fun";
 const FETCH_LIVE = process.env.NEXT_PUBLIC_FETCH_MARKETCAP === "true";
-const SOLAK_MINT = "CMZULfrynZSyhmfRfFLZB6XXBbCwzvuGathVE2UTpump";
+const SOLAK_MINT = "CMZULfrynZSyhmfRfFLZB6XXBbCwzvuGathVE2UT";
 
 const INITIAL_TOKENS = [
   { symbol: "$SOLAK", address: SOLAK_MINT, status: "live", side: "good", pumpUrl: `${PUMP_BASE}/${SOLAK_MINT}`, dexUrl: `https://dexscreener.com/solana/${SOLAK_MINT}`, hidden: false },
@@ -87,10 +87,8 @@ function TokenCard({ t }) {
     <Card className="rounded-2xl">
       <CardHeader className="pb-2"><CardTitle className="flex items-center justify-between text-lg"><span>{t.symbol}</span><Badge variant={t.status === "live" ? "default" : t.status === "coming" ? "secondary" : "outline"}>{t.status}</Badge></CardTitle></CardHeader>
       <CardContent className="space-y-3">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
+        <div className="grid grid-cols-2 md:grid-cols-2 gap-3 text-sm">
           <div><p className="opacity-70">Market Cap</p><p className="font-semibold">{t.marketCapUSD ? `$${t.marketCapUSD.toLocaleString()}` : "–"}</p></div>
-          <div><p className="opacity-70">Price</p><p className="font-semibold">{t.priceUSD ? `$${t.priceUSD.toLocaleString()}` : "–"}</p></div>
-          <div><p className="opacity-70">Holders</p><p className="font-semibold">{t.holders?.toLocaleString?.() ?? "–"}</p></div>
           <div><p className="opacity-70">Links</p><div className="flex gap-2">{t.dexUrl && (<a className="underline text-sm" href={t.dexUrl} target="_blank" rel="noreferrer">Dex</a>)}{t.pumpUrl && (<a className="underline text-sm" href={t.pumpUrl} target="_blank" rel="noreferrer">pump.fun</a>)}</div></div>
         </div>
         <div className="flex items-center justify-between"><div className="flex items-center gap-2 text-xs opacity-80"><BarChart3 className="w-3.5 h-3.5"/> live</div><div className="flex items-center gap-2"><Button size="sm" variant="outline" className="rounded-xl">Chart</Button><Button size="sm" className="rounded-xl">Share</Button></div></div>
@@ -178,12 +176,13 @@ function LineupsSection() {
   );
 }
 
-function MilestonesSection() {
+function MilestonesSection({ guardiansTotal = 0, nullTotal = 0 }) {
+  const fmt = (n) => (n && n > 0 ? `$${n.toLocaleString()}` : "—");
   return (
     <Section id="milestones" title="Marketcap" icon={<Swords className="w-6 h-6"/>} subtitle="" colored>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <Card className="rounded-2xl"><CardHeader><CardTitle className="flex items-center gap-2"><Shield className="w-5 h-5"/> ChainGuardians</CardTitle></CardHeader><CardContent><div className="text-2xl font-bold tracking-tight">Marketcap XXX</div><p className="text-xs opacity-70 mt-1">Milestones hidden for now.</p></CardContent></Card>
-        <Card className="rounded-2xl"><CardHeader><CardTitle className="flex items-center gap-2"><Lock className="w-5 h-5"/> The Null Order</CardTitle></CardHeader><CardContent><div className="text-2xl font-bold tracking-tight">Marketcap XXX</div><p className="text-xs opacity-70 mt-1">Milestones hidden for now.</p></CardContent></Card>
+        <Card className="rounded-2xl"><CardHeader><CardTitle className="flex items-center gap-2"><Shield className="w-5 h-5"/> ChainGuardians</CardTitle></CardHeader><CardContent><div className="text-2xl font-bold tracking-tight">{fmt(guardiansTotal)}</div><p className="text-xs opacity-70 mt-1">Totals auto-update from live tokens.</p></CardContent></Card>
+        <Card className="rounded-2xl"><CardHeader><CardTitle className="flex items-center gap-2"><Lock className="w-5 h-5"/> The Null Order</CardTitle></CardHeader><CardContent><div className="text-2xl font-bold tracking-tight">{fmt(nullTotal)}</div><p className="text-xs opacity-70 mt-1">Totals auto-update from live tokens.</p></CardContent></Card>
       </div>
     </Section>
   );
@@ -215,7 +214,7 @@ function CommandCenterPage() {
       </div>
       <div className="space-y-10">
         <TokensSection onTotals={(g, n) => { setGuardiansTotal(g); setNullTotal(n); }} />
-        <MilestonesSection />
+        <MilestonesSection guardiansTotal={guardiansTotal} nullTotal={nullTotal} />
         <LineupsSection />
         <SocialSection guardiansTotal={guardiansTotal} nullTotal={nullTotal} />
       </div>
