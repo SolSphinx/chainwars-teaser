@@ -48,9 +48,9 @@ const Section = ({ id, title, icon, className, subtitle, children, colored = fal
 );
 
 async function fetchPumpStats(mint) {
-  if (!FETCH_LIVE || !mint || isPlaceholderMint(mint)) return null;
+  if (!mint || isPlaceholderMint(mint)) return null;
   try {
-    const res = await fetch(`/api/pump?source=dexscreener&mint=${encodeURIComponent(mint)}`, { cache: "no-store" });
+    const res = await fetch(`/api/pump?source=dexscreener&mint=${encodeURIComponent(mint)`, { cache: "no-store" });
     if (!res.ok) return null;
     return await res.json();
   } catch { return null; }
@@ -100,17 +100,14 @@ function TokenCard({ t }) {
 function TokensSection({ onTotals }) {
   const [tokens, setTokens] = useState(INITIAL_TOKENS);
   useEffect(() => { (async () => {
-    if (FETCH_LIVE) {
-      const updated = await Promise.all(tokens.map(async (t) => {
-        const stats = t.address ? await fetchPumpStats(t.address) : null;
-        if (!stats) return t;
-        return { ...t, priceUSD: stats.priceUsd ?? t.priceUSD, marketCapUSD: stats.marketCapUsd ?? t.marketCapUSD, holders: stats.holders ?? t.holders };
-      }));
-      setTokens(updated);
-      onTotals?.(sumMarketcapBySide(updated, "good"), sumMarketcapBySide(updated, "dark"));
-    } else {
-      onTotals?.(sumMarketcapBySide(tokens, "good"), sumMarketcapBySide(tokens, "dark"));
-    }
+    const updated = await Promise.all(tokens.map(async (t) => {
+      if (t.status !== "live") return t; // fetch only live tokens
+      const stats = t.address ? await fetchPumpStats(t.address) : null;
+      if (!stats) return t;
+      return { ...t, priceUSD: stats.priceUsd ?? t.priceUSD, marketCapUSD: stats.marketCapUsd ?? t.marketCapUSD, holders: stats.holders ?? t.holders };
+    }));
+    setTokens(updated);
+    onTotals?.(sumMarketcapBySide(updated, "good"), sumMarketcapBySide(updated, "dark"));
   })(); }, []);
   return (
     <Section id="tokens" title="Tokens" icon={<Sparkles className="w-6 h-6" />} subtitle="Live and upcoming tokens in the ChainWars saga." colored>
