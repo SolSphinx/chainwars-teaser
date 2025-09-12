@@ -1,8 +1,11 @@
 // ================================================
 // FILE: components/ui/dialog.jsx
-// Minimal dialog (no portal) with ESC + overlay close + close button
+// Minimal dialog rendered in a portal (fixes clipping by overflow/filters)
 // ================================================
+"use client";
+
 import React, { createContext, useContext, useEffect, useRef, useState, cloneElement } from "react";
+import { createPortal } from "react-dom";
 
 const DialogCtx = createContext(null);
 
@@ -19,17 +22,32 @@ export function DialogTrigger({ asChild = false, children }) {
   return <button onClick={() => setOpen(true)}>{children}</button>;
 }
 
+function Portal({ children }) {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+    return () => setMounted(false);
+  }, []);
+  if (!mounted) return null;
+  return createPortal(children, document.body);
+}
+
 export function DialogContent({ className = "", children }) {
   const { open, setOpen } = useContext(DialogCtx);
   const contentRef = useRef(null);
 
+  // Focus + body scroll lock wanneer open
   useEffect(() => {
-    if (open) contentRef.current?.focus();
+    if (!open) return;
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    contentRef.current?.focus();
+    return () => { document.body.style.overflow = prevOverflow; };
   }, [open]);
 
   if (!open) return null;
 
-  return (
+  const node = (
     <div
       className="fixed inset-0 z-50"
       onKeyDown={(e) => e.key === "Escape" && setOpen(false)}
@@ -54,14 +72,10 @@ export function DialogContent({ className = "", children }) {
       </div>
     </div>
   );
+
+  return <Portal>{node}</Portal>;
 }
 
-export function DialogHeader({ children }) {
-  return <div className="mb-2">{children}</div>;
-}
-
-export function DialogTitle({ children, className = "" }) {
-  return <div className={`text-lg font-semibold ${className}`}>{children}</div>;
-}
-
+export function DialogHeader({ children }) { return <div className="mb-2">{children}</div>; }
+export function DialogTitle({ children, className = "" }) { return <div className={`text-lg font-semibold ${className}`}>{children}</div>; }
 export default Dialog;
