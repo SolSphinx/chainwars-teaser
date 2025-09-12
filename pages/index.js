@@ -112,7 +112,7 @@ function TokensSection({ onTotals }) {
     }
   })(); }, []);
   return (
-    <Section id="tokens"$1 colored>} subtitle="Live and upcoming tokens in the ChainWars saga.">
+    <Section id="tokens" title="Tokens" icon={<Sparkles className="w-6 h-6" />} subtitle="Live and upcoming tokens in the ChainWars saga." colored>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">{tokens.filter((t) => !t.hidden).map((t) => <TokenCard key={t.symbol} t={t} />)}</div>
     </Section>
   );
@@ -164,7 +164,7 @@ function LineupsSection() {
   const rename = (side, id, newName) => { setRoster((prev) => { const next = { ...prev, [side]: prev[side].map((c) => c.id === id ? { ...c, name: newName } : c) }; saveRoster(next); return next; }); };
   const reset = () => { setRoster(DEFAULT_ROSTER); saveRoster(DEFAULT_ROSTER); };
   return (
-    <Section id="lineups"$1 colored>} subtitle="Locked/unlocked logic with detail modals and inline renaming.">
+    <Section id="lineups" title="Lineups" icon={<Info className="w-6 h-6"/>} subtitle="Locked/unlocked logic with detail modals and inline renaming." colored>
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2 text-sm"><span>Edit names</span><Switch checked={editMode} onCheckedChange={setEditMode}/></div>
         {editMode && (<div className="flex items-center gap-2"><Button size="sm" variant="outline" className="rounded-xl" onClick={reset}>Reset to defaults</Button></div>)}
@@ -180,7 +180,7 @@ function LineupsSection() {
 
 function MilestonesSection() {
   return (
-    <Section id="milestones"$1 colored>} subtitle="">
+    <Section id="milestones" title="Marketcap" icon={<Swords className="w-6 h-6"/>} subtitle="" colored>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Card className="rounded-2xl"><CardHeader><CardTitle className="flex items-center gap-2"><Shield className="w-5 h-5"/> ChainGuardians</CardTitle></CardHeader><CardContent><div className="text-2xl font-bold tracking-tight">Marketcap XXX</div><p className="text-xs opacity-70 mt-1">Milestones hidden for now.</p></CardContent></Card>
         <Card className="rounded-2xl"><CardHeader><CardTitle className="flex items-center gap-2"><Lock className="w-5 h-5"/> The Null Order</CardTitle></CardHeader><CardContent><div className="text-2xl font-bold tracking-tight">Marketcap XXX</div><p className="text-xs opacity-70 mt-1">Milestones hidden for now.</p></CardContent></Card>
@@ -206,14 +206,11 @@ function SocialSection({ guardiansTotal, nullTotal }) {
 function Footer() { return (<div className="w-full max-w-6xl mx-auto px-4 md:px-6 py-10 opacity-70 text-sm"><p>© {new Date().getFullYear()} ChainWars. Community-driven saga. Not financial advice.</p></div>); }
 
 function CommandCenterPage() {
-  const [audioOn, setAudioOn] = useState(false);
   const [guardiansTotal, setGuardiansTotal] = useState(0);
   const [nullTotal, setNullTotal] = useState(0);
-  useEffect(() => { let audio = null; if (audioOn) { const a = new Audio("/sfx/powerup.mp3"); a.volume = 0.25; a.play().catch(() => {}); audio = a; } return () => { if (audio) audio.pause(); }; }, [audioOn]);
   return (
     <main className="min-h-screen w-full py-6 md:py-10">
       <div className="w-full max-w-6xl mx-auto px-4 md:px-6">
-        </div>
         <Hero />
       </div>
       <div className="space-y-10">
