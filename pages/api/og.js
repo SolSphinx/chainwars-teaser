@@ -2,7 +2,7 @@
 // FILE: pages/api/og.js  (Pages Router, JS)
 // NOTE: in your real repo, rename `ogConfig` → `config` for edge runtime.
 // ================================================
-export const ogConfig = { runtime: "edge" };
+export const config = { runtime: "edge" };
 import { ImageResponse } from "next/server";
 
 export default function handler(req) {
