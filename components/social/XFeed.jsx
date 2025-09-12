@@ -1,8 +1,9 @@
 // ================================================
 // FILE: components/social/XFeed.jsx
 // Robust X (Twitter) timeline embed using the widgets API programmatically.
-// - Works even if the script loaded before/after the anchor is present.
-// - Detects script load and (re)creates the timeline, avoids double-initialization.
+// - Keeps fallback link visible until timeline successfully mounts.
+// - Retries a few times if the widgets API is late to initialize.
+// - Avoids duplicate iframes on re-renders.
 // - Usage: <XFeed username="SolSphinx" height={520} theme="dark" tweetLimit={5} />
 //          or <XFeed href="https://twitter.com/i/lists/123" />
 // ================================================
@@ -13,31 +14,51 @@ import Script from "next/script";
 export default function XFeed({ username, href, height = 520, theme = "dark", tweetLimit = 5, chrome = "noheader nofooter noborders transparent" }) {
   const containerRef = useRef(null);
   const [widgetsReady, setWidgetsReady] = useState(false);
+  const attemptsRef = useRef(0);
   const timelineHref = href || (username ? `https://twitter.com/${username}` : "https://twitter.com/x");
 
+  // If the script was already loaded by another component/page
   useEffect(() => {
-    if (!widgetsReady) return;
-    const target = containerRef.current;
-    if (!target || !window.twttr?.widgets?.createTimeline) return;
+    if (typeof window !== "undefined" && window.twttr?.widgets) {
+      setWidgetsReady(true);
+    }
+  }, []);
 
-    // Clear previous iframe if any (avoid duplicates on prop changes)
-    target.innerHTML = "";
+  const mountTimeline = async () => {
+    const tw = window.twttr?.widgets;
+    const target = containerRef.current;
+    if (!tw?.createTimeline || !target) return;
+
+    // Remove any previous iframes so we don't duplicate on prop changes
+    target.querySelectorAll("iframe.twitter-timeline").forEach((n) => n.remove());
 
     const opts = { height, theme, chrome, tweetLimit };
     const source = href
       ? { sourceType: "url", url: timelineHref }
       : { sourceType: "profile", screenName: username };
 
-    window.twttr.widgets
-      .createTimeline(source, target, opts)
-      .catch(() => {
-        // Silent fail: keep the plain link visible as fallback
-      });
+    try {
+      await tw.createTimeline(source, target, opts);
+      attemptsRef.current = 0; // success
+    } catch (e) {
+      // Retry up to 3 times with small delays (handles late script init or flaky loads)
+      if (attemptsRef.current < 3) {
+        attemptsRef.current += 1;
+        setTimeout(mountTimeline, 800);
+      }
+      // Keep fallback visible on failure
+      // console.error("X timeline failed:", e);
+    }
+  };
+
+  useEffect(() => {
+    if (widgetsReady) mountTimeline();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [widgetsReady, username, href, timelineHref, height, theme, tweetLimit, chrome]);
 
   return (
     <div className="w-full" style={{ minHeight: height }}>
-      {/* Fallback link (rendered until script loads / in no-JS mode) */}
+      {/* Fallback link (rendered until widgets create an iframe) */}
       <div ref={containerRef}>
         <a href={timelineHref} target="_blank" rel="noreferrer noopener">
           Tweets by @{username || "X"}
