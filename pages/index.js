@@ -52,14 +52,24 @@ const Section = ({ id, title, icon, className, subtitle, children, colored = fal
 );
 
 async function fetchPumpStats(mint) {
+  // Fetch directly from Dexscreener on the client to avoid API route/runtime issues.
   if (!mint || isPlaceholderMint(mint)) return null;
-  try {
-    const res = await fetch(`/api/pump?source=dexscreener&mint=${encodeURIComponent(normalizeMint(mint))}`, { cache: "no-store" });
-    if (!res.ok) return null;
-    return await res.json();
-  } catch {
-    return null;
+  const candidates = Array.from(new Set([mint, normalizeMint(mint)]));
+  for (const m of candidates) {
+    try {
+      const res = await fetch(`https://api.dexscreener.com/latest/dex/tokens/${encodeURIComponent(m)}`, { cache: "no-store" });
+      if (!res.ok) continue;
+      const ds = await res.json();
+      if (Array.isArray(ds?.pairs) && ds.pairs.length) {
+        const pair = ds.pairs.find(p => p?.priceUsd) || ds.pairs[0];
+        return {
+          priceUsd: pair?.priceUsd ? Number(pair.priceUsd) : null,
+          marketCapUsd: pair?.fdv ? Number(pair.fdv) : (pair?.marketCap ? Number(pair.marketCap) : null),
+        };
+      }
+    } catch {}
   }
+  return null;
 }
 
 function Hero() {
