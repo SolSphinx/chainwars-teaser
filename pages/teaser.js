@@ -1,13 +1,13 @@
 // ================================================
 // FILE: pages/teaser.js  (Pages Router, JavaScript)
-// Teaser landingspagina – stijl zoals chainwars.fun
+// Teaser landing page — styled like chainwars.fun (EN)
 // ================================================
 import React, { useEffect, useState } from "react";
 import Head from "next/head";
 import { Button } from "../components/ui/button";
 
-// Optionele countdown – zet een doelmoment of laat op 00:00:00 staan
-const LAUNCH_AT = null; // bv: new Date("2025-11-01T12:00:00Z").getTime()
+// Optional countdown — set a timestamp or keep 00:00:00
+const LAUNCH_AT = null; // e.g. new Date("2025-11-01T12:00:00Z").getTime()
 
 function useCountdown(target) {
   const [left, setLeft] = useState(() => (target ? Math.max(0, target - Date.now()) : 0));
@@ -70,23 +70,23 @@ export default function TeaserPage() {
             </div>
           </div>
 
-          {/* Countdown (optioneel) */}
+          {/* Countdown (optional) */}
           <div className="mt-10">
             <p className="text-xs uppercase tracking-wider opacity-70">First drop arriving in</p>
             <div className="mt-2 text-4xl md:text-5xl font-bold tabular-nums">{LAUNCH_AT ? clock : "00:00:00"}</div>
           </div>
 
-          {/* CTA knoppen */}
+          {/* CTAs */}
           <div className="mt-10 flex flex-col sm:flex-row gap-3 items-center justify-center">
             <a href="/command-center" className="no-underline" rel="noreferrer">
               <Button size="lg" className="rounded-2xl">Open Command Center</Button>
             </a>
             <a href="https://x.com/chainwarsfun" target="_blank" rel="noreferrer" className="no-underline">
-              <Button size="lg" variant="outline" className="rounded-2xl">Volg ons op X</Button>
+              <Button size="lg" variant="outline" className="rounded-2xl">Follow us on X</Button>
             </a>
           </div>
 
-          <div className="opacity-70 text-xs mt-12">© {new Date().getFullYear()} ChainWars • Niet financieel advies</div>
+          <div className="opacity-70 text-xs mt-12">© {new Date().getFullYear()} ChainWars • Not financial advice</div>
         </div>
       </main>
     </>
