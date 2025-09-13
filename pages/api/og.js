@@ -24,19 +24,3 @@ export default function handler(req, res) {
   res.setHeader("Content-Type", "image/svg+xml");
   res.status(200).send(svg);
 }
-
-$1<a href="/command-center" rel="noreferrer">
-                  <Button variant="outline" className="rounded-2xl">Open Command Center</Button>
-                </a>
-              </div>
-
-              <div className="opacity-70 text-xs mt-6">
-                © {new Date().getFullYear()} ChainWars • Niet financieel advies
-              </div>
-            </div>
-          </div>
-        </div>
-      </main>
-    </>
-  );
-}
