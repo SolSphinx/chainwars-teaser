@@ -5,6 +5,8 @@
 import React, { useEffect, useState } from "react";
 import Head from "next/head";
 import { Button } from "../components/ui/button";
+import Image from "next/image";
+
 
 // Optional countdown — set a timestamp or keep 00:00:00
 const LAUNCH_AT = null; // e.g. new Date("2025-11-01T12:00:00Z").getTime()
