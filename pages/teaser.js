@@ -46,31 +46,35 @@ export default function TeaserPage() {
             Two factions. One chain. The fracture begins soon.
           </p>
 
-          {/* Faction orbs */}
-          <div className="mt-10 grid grid-cols-2 gap-8 items-center justify-center place-items-center">
-            <div className="text-center">
-              <div
-                className="h-40 w-40 rounded-full"
-                style={{
-                  background: "radial-gradient(35% 35% at 50% 50%, rgba(250,204,21,1), rgba(250,204,21,0.8) 40%, rgba(250,204,21,0.1) 70%, rgba(0,0,0,0) 100%)",
-                  boxShadow: "0 0 120px 40px rgba(250,204,21,0.35)",
-                }}
-              />
-              <div className="mt-3 font-semibold">ChainGuardians</div>
-            </div>
-            <div className="text-center">
-              <div
-                className="h-40 w-40 rounded-full"
-                style={{
-                  background: "radial-gradient(35% 35% at 50% 50%, rgba(168,85,247,1), rgba(168,85,247,0.85) 40%, rgba(168,85,247,0.12) 70%, rgba(0,0,0,0) 100%)",
-                  boxShadow: "0 0 120px 40px rgba(168,85,247,0.35)",
-                }}
-              />
-              <div className="mt-3 font-semibold">The Null Order</div>
-            </div>
-          </div>
+          {/* Faction logos */}
+<div className="mt-10 grid grid-cols-2 gap-8 items-center justify-center place-items-center">
+  <div className="text-center">
+    <div className="relative h-40 w-40 md:h-48 md:w-48">
+      <Image
+        src="/factions/ChainGuardians_logo.png"
+        alt="ChainGuardians logo"
+        fill
+        className="object-contain drop-shadow-2xl"
+        priority
+      />
+    </div>
+    <div className="mt-3 font-semibold">ChainGuardians</div>
+  </div>
+  <div className="text-center">
+    <div className="relative h-40 w-40 md:h-48 md:w-48">
+      <Image
+        src="/factions/NullOrder_Logo.png"
+        alt="The Null Order logo"
+        fill
+        className="object-contain drop-shadow-2xl"
+        priority
+      />
+    </div>
+    <div className="mt-3 font-semibold">The Null Order</div>
+  </div>
+</div>
 
-          {/* Countdown (optional) */}
+{/* Countdown (optional) */}
           <div className="mt-10">
             <p className="text-xs uppercase tracking-wider opacity-70">First drop arriving in</p>
             <div className="mt-2 text-4xl md:text-5xl font-bold tabular-nums">{LAUNCH_AT ? clock : "00:00:00"}</div>
