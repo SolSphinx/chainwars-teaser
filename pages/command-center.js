@@ -7,6 +7,7 @@
 import React, { useEffect, useState } from "react";
 import Head from "next/head";
 import { Button } from "../components/ui/button";
+import Image from "next/image";
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
 import { Badge } from "../components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
@@ -285,7 +286,7 @@ function CommandCenterPage() {
   const [nullTotal, setNullTotal] = useState(0);
 
   return (
-    <main className="min-h-screen w-full py-6 md:py-10">
+    <main className="min-h-screen w-full bg-black text-white py-6 md:py-10">
       <div className="w-full max-w-6xl mx-auto px-4 md:px-6">
         <Hero />
       </div>
