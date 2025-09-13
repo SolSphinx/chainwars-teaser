@@ -14,7 +14,6 @@ import { Badge } from "../components/ui/badge";
 import { Input } from "../components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../components/ui/dialog";
-import { Switch } from "../components/ui/switch";
 import XFeed from "../components/social/XFeed";
 import { Share2, Twitter, Lock, Unlock, Info, Sparkles, Shield, Swords, BarChart3 } from "lucide-react";
 import { nextMilestoneProgress, sumMarketcapBySide, isPlaceholderMint } from "../lib/helpers";
@@ -150,17 +149,17 @@ const DEFAULT_ROSTER = {
 };
 
 function loadRoster() { if (typeof window === "undefined") return DEFAULT_ROSTER; try { const raw = localStorage.getItem(ROSTER_KEY); if (!raw) return DEFAULT_ROSTER; const parsed = JSON.parse(raw); return { guardians: Array.isArray(parsed.guardians) ? parsed.guardians : DEFAULT_ROSTER.guardians, nulls: Array.isArray(parsed.nulls) ? parsed.nulls : DEFAULT_ROSTER.nulls }; } catch { return DEFAULT_ROSTER; } }
-function saveRoster(roster) { try { if (typeof window !== "undefined") localStorage.setItem(ROSTER_KEY, JSON.stringify(roster)); } catch {} }
+catch {} }
 
-function Character({ name, side, locked, teaser, editMode, onRename }) {
-  const publicName = locked && !editMode ? "???" : name;
-  const publicTeaser = locked && !editMode ? "Hidden until milestone is reached." : teaser;
+function Character({ name, side, locked, teaser }) {
+  const publicName = locked ? "???" : name;
+  const publicTeaser = locked ? "Hidden until milestone is reached." : teaser;
   return (
     <Card className={`rounded-2xl ${locked ? "opacity-70" : ""}`}>
-      <CardHeader className="pb-2"><CardTitle className="flex items-center justify-between gap-2">{editMode ? (<Input defaultValue={name} onBlur={(e)=> onRename?.(e.currentTarget.value)} className="h-8 max-w-[70%]"/>) : (<span>{publicName}</span>)}{locked ? <Badge variant="outline" className="flex items-center gap-1"><Lock className="w-3.5 h-3.5"/> Locked</Badge> : <Badge className="flex items-center gap-1"><Unlock className="w-3.5 h-3.5"/> Unlocked</Badge>}</CardTitle></CardHeader>
+      <CardHeader className="pb-2"><CardTitle className="flex items-center justify-between gap-2"><span>{publicName}</span>{locked ? <Badge variant="outline" className="flex items-center gap-1"><Lock className="w-3.5 h-3.5"/> Locked</Badge> : <Badge className="flex items-center gap-1"><Unlock className="w-3.5 h-3.5"/> Unlocked</Badge>}</CardTitle></CardHeader>
       <CardContent>
         <Dialog>
-          <DialogTrigger asChild><Button variant="outline" className="rounded-xl w-full">{editMode ? "Preview details" : locked ? "Locked" : "View details"}</Button></DialogTrigger>
+          <DialogTrigger asChild><Button variant="outline" className="rounded-xl w-full">{locked ? "Locked" : "View details"}</Button></DialogTrigger>
           <DialogContent className="max-w-lg"><DialogHeader><DialogTitle className="flex items-center justify-between"><span>{publicName}</span><Badge variant={side === "good" ? "default" : "secondary"}>{side === "good" ? "ChainGuardian" : "Null Order"}</Badge></DialogTitle></DialogHeader><div className="space-y-3 text-sm"><p className="opacity-80">{publicTeaser}</p><div className="p-3 rounded-xl bg-white/5 border border-white/10 text-xs"><p className="font-semibold mb-1">Unlock hint</p><p>Complete the next milestone to reveal this lore.</p></div></div></DialogContent>
         </Dialog>
       </CardContent>
@@ -169,21 +168,16 @@ function Character({ name, side, locked, teaser, editMode, onRename }) {
 }
 
 function LineupsSection() {
-  const [editMode, setEditMode] = useState(false);
   const [roster, setRoster] = useState(DEFAULT_ROSTER);
-  useEffect(() => { setRoster(loadRoster()); }, []);
-  const rename = (side, id, newName) => { setRoster((prev) => { const next = { ...prev, [side]: prev[side].map((c) => c.id === id ? { ...c, name: newName } : c) }; saveRoster(next); return next; }); };
-  const reset = () => { setRoster(DEFAULT_ROSTER); saveRoster(DEFAULT_ROSTER); };
-  return (
-    <Section id="lineups" title="Lineups" icon={<Info className="w-6 h-6"/>} subtitle="Locked/unlocked logic with detail modals and inline renaming." colored>
-      <div className="flex items-center justify-between mb-3">
-        <div className="flex items-center gap-2 text-sm"><span>Edit names</span><Switch checked={editMode} onCheckedChange={setEditMode}/></div>
+  useEffect(() => { setRoster(loadRoster()); }, []);saveRoster(next); return next; }); };return (
+    <Section id="lineups" title="Lineups" icon={<Info className="w-6 h-6"/>} subtitle="Locked/unlocked logic with detail modals." colored>
+      
         {editMode && (<div className="flex items-center gap-2"><Button size="sm" variant="outline" className="rounded-xl" onClick={reset}>Reset to defaults</Button></div>)}
       </div>
       <Tabs defaultValue="guardians" className="w-full">
         <TabsList className="grid grid-cols-2 w-full"><TabsTrigger value="guardians">ChainGuardians</TabsTrigger><TabsTrigger value="null">The Null Order</TabsTrigger></TabsList>
-        <TabsContent value="guardians" className="mt-4"><div className="grid grid-cols-1 md:grid-cols-3 gap-4">{roster.guardians.map((c) => (<Character key={c.id} name={c.name} side={c.side} locked={c.locked} teaser={c.teaser} editMode={editMode} onRename={(v)=>rename("guardians", c.id, v)} />))}</div></TabsContent>
-        <TabsContent value="null" className="mt-4"><div className="grid grid-cols-1 md:grid-cols-3 gap-4">{roster.nulls.map((c) => (<Character key={c.id} name={c.name} side={c.side} locked={c.locked} teaser={c.teaser} editMode={editMode} onRename={(v)=>rename("nulls", c.id, v)} />))}</div></TabsContent>
+        <TabsContent value="guardians" className="mt-4"><div className="grid grid-cols-1 md:grid-cols-3 gap-4">{roster.guardians.map((c) => (<Character key={c.id} name={c.name} side={c.side} locked={c.locked} teaser={c.teaser} />))}</div></TabsContent>
+        <TabsContent value="null" className="mt-4"><div className="grid grid-cols-1 md:grid-cols-3 gap-4">{roster.nulls.map((c) => (<Character key={c.id} name={c.name} side={c.side} locked={c.locked} teaser={c.teaser} />))}</div></TabsContent>
       </Tabs>
     </Section>
   );
