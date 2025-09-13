@@ -1,4 +1,7 @@
-// pages/command-center.js
+// ================================================
+// FILE: pages/command-center.js  (Pages Router, JavaScript)
+// Command Center (EN) — no Social/Feed section
+// ================================================
 "use client";
 
 import React, { useEffect, useState } from "react";
@@ -6,18 +9,15 @@ import Head from "next/head";
 import { Button } from "../components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
 import { Badge } from "../components/ui/badge";
-import { Input } from "../components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../components/ui/dialog";
-import XFeed from "../components/social/XFeed";
-import { Share2, Twitter, Lock, Unlock, Info, Sparkles, Shield, Swords, BarChart3 } from "lucide-react";
-import { nextMilestoneProgress, sumMarketcapBySide, isPlaceholderMint } from "../lib/helpers";
+import { Lock, Unlock, Info, Sparkles, Shield, Swords, BarChart3 } from "lucide-react";
+import { sumMarketcapBySide, isPlaceholderMint } from "../lib/helpers";
 
 const PUMP_BASE = "https://pump.fun";
 const SOLAK_MINT = "4zwdqjxkadmuh9bhkmqfu8d1rh7trdtghgw7uqf2hwpm";
 
 // ---------------- Tokens ----------------
-
 const INITIAL_TOKENS = [
   { symbol: "$SOLAK", address: SOLAK_MINT, status: "live", side: "good", pumpUrl: `${PUMP_BASE}/${SOLAK_MINT}`, dexUrl: `https://dexscreener.com/solana/${SOLAK_MINT}`, hidden: false },
   { symbol: "Coming up...", address: "CENTRA_MINT_PLACEHOLDER", status: "coming", side: "dark", pumpUrl: `${PUMP_BASE}`, hidden: false },
@@ -73,7 +73,7 @@ function Hero() {
         <div>
           <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight">ChainWars Command Center</h1>
           <p className="mt-3 text-sm md:text-base opacity-90 max-w-2xl">
-            Live status van de strijd tussen de <span className="font-semibold">ChainGuardians</span> en <span className="font-semibold">The Null Order</span>. Volg marketcaps, milestones en lore-unlocks in real time.
+            Live status of the battle between the <span className="font-semibold">ChainGuardians</span> and <span className="font-semibold">The Null Order</span>. Track market caps, milestones, and lore unlocks in real time.
           </p>
           <div className="mt-4 flex flex-wrap items-center gap-2">
             <Badge className="bg-purple-600/40">SolaKnight featured</Badge>
@@ -82,7 +82,7 @@ function Hero() {
           </div>
         </div>
         <div className="flex items-center gap-3">
-          <a href="#milestones"><Button className="rounded-2xl">Bekijk milestones</Button></a>
+          <a href="#milestones"><Button className="rounded-2xl">View milestones</Button></a>
           <a href="#tokens"><Button variant="outline" className="rounded-2xl">Tokens</Button></a>
         </div>
       </div>
@@ -96,9 +96,7 @@ function TokenCard({ t }) {
       <CardHeader className="pb-2">
         <CardTitle className="flex items-center justify-between text-lg">
           <span>{t.symbol}</span>
-          <Badge variant={t.status === "live" ? "default" : t.status === "coming" ? "secondary" : "outline"}>
-            {t.status}
-          </Badge>
+          <Badge variant={t.status === "live" ? "default" : t.status === "coming" ? "secondary" : "outline"}>{t.status}</Badge>
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-3">
@@ -116,9 +114,7 @@ function TokenCard({ t }) {
           </div>
         </div>
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2 text-xs opacity-80">
-            <BarChart3 className="w-3.5 h-3.5" /> live
-          </div>
+          <div className="flex items-center gap-2 text-xs opacity-80"><BarChart3 className="w-3.5 h-3.5" /> live</div>
           <div className="flex items-center gap-2">
             <Button size="sm" variant="outline" className="rounded-xl">Chart</Button>
             <Button size="sm" className="rounded-xl">Share</Button>
@@ -139,11 +135,7 @@ function TokensSection({ onTotals }) {
           if (t.status !== "live") return t;
           const stats = await fetchPumpStats(t.address);
           if (!stats) return t;
-          return {
-            ...t,
-            priceUSD: stats.priceUsd ?? t.priceUSD,
-            marketCapUSD: stats.marketCapUsd ?? t.marketCapUSD,
-          };
+          return { ...t, priceUSD: stats.priceUsd ?? t.priceUSD, marketCapUSD: stats.marketCapUsd ?? t.marketCapUSD };
         })
       );
       setTokens(updated);
@@ -153,7 +145,7 @@ function TokensSection({ onTotals }) {
   }, []);
 
   return (
-    <Section id="tokens" title="Tokens" icon={<Sparkles className="w-6 h-6" />} subtitle="Live en upcoming tokens in de ChainWars saga." colored>
+    <Section id="tokens" title="Tokens" icon={<Sparkles className="w-6 h-6" />} subtitle="Live and upcoming tokens in the ChainWars saga." colored>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {tokens.filter((t) => !t.hidden).map((t) => <TokenCard key={t.symbol} t={t} />)}
       </div>
@@ -161,8 +153,7 @@ function TokensSection({ onTotals }) {
   );
 }
 
-// --------------- Lineups (geen rename; locked = ???) ----------------
-
+// ---------------- Lineups (no rename; locked shows ???) ----------------
 const DEFAULT_ROSTER = {
   guardians: [
     { id: "solaknight", name: "SolaKnight", locked: false, teaser: "The hero of light, riding the Layer-2 beam.", side: "good" },
@@ -184,7 +175,7 @@ const DEFAULT_ROSTER = {
 
 function Character({ name, side, locked, teaser }) {
   const publicName = locked ? "???" : name;
-  const publicTeaser = locked ? "Hidden until milestone is reached." : teaser;
+  const publicTeaser = locked ? "Hidden until a milestone is reached." : teaser;
 
   return (
     <Card className={`rounded-2xl ${locked ? "opacity-70" : ""}`}>
@@ -201,7 +192,7 @@ function Character({ name, side, locked, teaser }) {
       <CardContent>
         <Dialog>
           <DialogTrigger asChild>
-            <Button variant="outline" className="rounded-xl w-full">{locked ? "Locked" : "Bekijk details"}</Button>
+            <Button variant="outline" className="rounded-xl w-full">{locked ? "Locked" : "View details"}</Button>
           </DialogTrigger>
           <DialogContent className="max-w-lg">
             <DialogHeader>
@@ -231,7 +222,7 @@ function Character({ name, side, locked, teaser }) {
 function LineupsSection() {
   const roster = DEFAULT_ROSTER;
   return (
-    <Section id="lineups" title="Lineups" icon={<Info className="w-6 h-6" />} subtitle="Locked/unlocked met detail-modal." colored>
+    <Section id="lineups" title="Lineups" icon={<Info className="w-6 h-6" />} subtitle="Locked/unlocked with detail modals." colored>
       <Tabs defaultValue="guardians" className="w-full">
         <TabsList className="grid grid-cols-2 w-full">
           <TabsTrigger value="guardians">ChainGuardians</TabsTrigger>
@@ -256,8 +247,7 @@ function LineupsSection() {
   );
 }
 
-// --------------- Marketcap / Social ----------------
-
+// ---------------- Marketcap ----------------
 function MilestonesSection({ guardiansTotal = 0, nullTotal = 0 }) {
   const fmt = (n) => (n && n > 0 ? `$${n.toLocaleString()}` : "—");
   return (
@@ -265,65 +255,16 @@ function MilestonesSection({ guardiansTotal = 0, nullTotal = 0 }) {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Card className="rounded-2xl">
           <CardHeader><CardTitle className="flex items-center gap-2"><Shield className="w-5 h-5" /> ChainGuardians</CardTitle></CardHeader>
-          <CardContent><div className="text-2xl font-bold tracking-tight">{fmt(guardiansTotal)}</div><p className="text-xs opacity-70 mt-1">Totaal update automatisch vanuit live tokens.</p></CardContent>
+          <CardContent>
+            <div className="text-2xl font-bold tracking-tight">{fmt(guardiansTotal)}</div>
+            <p className="text-xs opacity-70 mt-1">Totals auto-update from live tokens.</p>
+          </CardContent>
         </Card>
         <Card className="rounded-2xl">
           <CardHeader><CardTitle className="flex items-center gap-2"><Lock className="w-5 h-5" /> The Null Order</CardTitle></CardHeader>
-          <CardContent><div className="text-2xl font-bold tracking-tight">{fmt(nullTotal)}</div><p className="text-xs opacity-70 mt-1">Totaal update automatisch vanuit live tokens.</p></CardContent>
-        </Card>
-      </div>
-    </Section>
-  );
-}
-
-function SocialSection({ guardiansTotal, nullTotal }) {
-  const siteUrl = typeof window !== "undefined" ? window.location.origin : "";
-  const guardiansOg = `/api/og?title=ChainWars%20Command%20Center&subtitle=%24SOLAK%20live&side=Guardians&progress=${nextMilestoneProgress(guardiansTotal)}`;
-  const nullOg = `/api/og?title=ChainWars%20Command%20Center&subtitle=Coming%20up...&side=Null%20Order&progress=${nextMilestoneProgress(nullTotal)}`;
-  return (
-    <Section id="social" title="Social & Feed" icon={<Twitter className="w-6 h-6" />} subtitle="X embed en share composer.">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <Card className="rounded-2xl">
-          <CardHeader><CardTitle>X Feed</CardTitle></CardHeader>
-          <CardContent><XFeed username="chainwarsfun" height={520} theme="dark" tweetLimit={5} /></CardContent>
-        </Card>
-        <Card className="rounded-2xl">
-          <CardHeader><CardTitle>Share</CardTitle></CardHeader>
-          <CardContent className="space-y-3">
-            <Input id="shareText" defaultValue={`ChainWars ⚔️ $SOLAK live — follow the battle:`} />
-            <div className="flex gap-2">
-              <Button
-                className="rounded-xl"
-                onClick={() => {
-                  const input = document.getElementById("shareText");
-                  const text = input && "value" in input ? input.value : "";
-                  const url = new URL("https://twitter.com/intent/tweet");
-                  url.searchParams.set("text", text);
-                  url.searchParams.set("url", siteUrl);
-                  window.open(url.toString(), "_blank");
-                }}
-              >
-                <Share2 className="w-4 h-4 mr-2" /> Compose
-              </Button>
-              <Button
-                variant="outline"
-                className="rounded-xl"
-                onClick={() => {
-                  const input = document.getElementById("shareText");
-                  const text = input && "value" in input ? input.value : "";
-                  navigator.clipboard.writeText(text);
-                }}
-              >
-                Copy
-              </Button>
-            </div>
-            <div className="text-xs opacity-80">
-              <p className="mb-1">OG preview links:</p>
-              <ul className="list-disc pl-4 space-y-1">
-                <li><a className="underline" href={guardiansOg} target="_blank" rel="noreferrer">Guardians OG card</a></li>
-                <li><a className="underline" href={nullOg} target="_blank" rel="noreferrer">Null Order OG card</a></li>
-              </ul>
-            </div>
+          <CardContent>
+            <div className="text-2xl font-bold tracking-tight">{fmt(nullTotal)}</div>
+            <p className="text-xs opacity-70 mt-1">Totals auto-update from live tokens.</p>
           </CardContent>
         </Card>
       </div>
@@ -352,7 +293,6 @@ function CommandCenterPage() {
         <TokensSection onTotals={(g, n) => { setGuardiansTotal(g); setNullTotal(n); }} />
         <MilestonesSection guardiansTotal={guardiansTotal} nullTotal={nullTotal} />
         <LineupsSection />
-        <SocialSection guardiansTotal={guardiansTotal} nullTotal={nullTotal} />
       </div>
       <Footer />
     </main>
