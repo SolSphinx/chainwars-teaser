@@ -1,6 +1,8 @@
 // ================================================
 // FILE: pages/command-center.js  (Pages Router, JavaScript)
 // Former home route moved here so /command-center shows the app.
+// ================================================  (Pages Router, JavaScript)
+// Former home route moved here so /command-center shows the app.
 // ================================================
 "use client";
 
@@ -206,7 +208,7 @@ function SocialSection({ guardiansTotal, nullTotal }) {
   return (
     <Section id="social" title="Social & Feed" icon={<Twitter className="w-6 h-6"/>} subtitle="X embed and share composer.">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <Card className="rounded-2xl"><CardHeader><CardTitle>X Feed</CardTitle></CardHeader><CardContent><XFeed username="SolSphinx" height={520} theme="dark" tweetLimit={5} /></CardContent></Card>
+        <Card className="rounded-2xl"><CardHeader><CardTitle>X Feed</CardTitle></CardHeader><CardContent><XFeed username="chainwarsfun" height={520} theme="dark" tweetLimit={5} /></CardContent></Card>
         <Card className="rounded-2xl"><CardHeader><CardTitle>Share</CardTitle></CardHeader><CardContent className="space-y-3"><Input id="shareText" defaultValue={`ChainWars ⚔️ $SOLAK live — follow the battle:`} /><div className="flex gap-2"><Button className="rounded-xl" onClick={() => { const input = document.getElementById("shareText"); const text = input && "value" in input ? input.value : ""; const url = new URL("https://twitter.com/intent/tweet"); url.searchParams.set("text", text); url.searchParams.set("url", siteUrl); window.open(url.toString(), "_blank"); }}><Share2 className="w-4 h-4 mr-2"/> Compose</Button><Button variant="outline" className="rounded-xl" onClick={() => { const input = document.getElementById("shareText"); const text = input && "value" in input ? input.value : ""; navigator.clipboard.writeText(text); }}>Copy</Button></div><div className="text-xs opacity-80"><p className="mb-1">OG preview links:</p><ul className="list-disc pl-4 space-y-1"><li><a className="underline" href={guardiansOg} target="_blank" rel="noreferrer">Guardians OG card</a></li><li><a className="underline" href={nullOg} target="_blank" rel="noreferrer">Null Order OG card</a></li></ul></div></CardContent></Card>
       </div>
     </Section>
