@@ -1,5 +1,5 @@
 // ================================================
-// FILE: pages/command-center.js  (Pages Router, JavaScript)
+// [COMMAND] FILE: pages/command-center.js  (Pages Router, JavaScript)
 // Command Center (EN) — no Social/Feed section
 // ================================================
 "use client";
@@ -32,14 +32,28 @@ const INITIAL_TOKENS = [
   { symbol: "$GPHANTOM", address: "GPHANTOM_MINT_PLACEHOLDER", status: "locked", side: "dark", pumpUrl: `${PUMP_BASE}`, hidden: true },
 ];
 
-async function fetchPumpStats(mint) {
+async function fetchPumpStats(mint, symbol) {
   if (!mint || isPlaceholderMint(mint)) return null;
   try {
+    let pair = null;
+    // Try by mint address first
     const res = await fetch(`https://api.dexscreener.com/latest/dex/tokens/${encodeURIComponent(mint)}`, { cache: "no-store" });
-    if (!res.ok) return null;
-    const ds = await res.json();
-    if (!Array.isArray(ds?.pairs) || ds.pairs.length === 0) return null;
-    const pair = ds.pairs.find((p) => p?.priceUsd) || ds.pairs[0];
+    if (res.ok) {
+      const ds = await res.json();
+      if (Array.isArray(ds?.pairs) && ds.pairs.length > 0) {
+        pair = ds.pairs.find((p) => p?.priceUsd) || ds.pairs[0];
+      }
+    }
+    // Fallback: search by symbol on Solana
+    if (!pair && symbol) {
+      const r2 = await fetch(`https://api.dexscreener.com/latest/dex/search?q=${encodeURIComponent(symbol.replace(/^\$/,''))}`, { cache: "no-store" });
+      if (r2.ok) {
+        const s = await r2.json();
+        const sols = (s?.pairs || []).filter((p) => p?.chainId === "solana" && (p?.baseToken?.symbol?.toLowerCase?.() === symbol.replace(/^\$/,'').toLowerCase()));
+        pair = sols.find((p) => p?.priceUsd) || sols[0] || null;
+      }
+    }
+    if (!pair) return null;
     return {
       priceUsd: pair?.priceUsd ? Number(pair.priceUsd) : null,
       marketCapUsd: pair?.fdv ? Number(pair.fdv) : (pair?.marketCap ? Number(pair.marketCap) : null),
@@ -67,15 +81,14 @@ function Section({ id, title, icon, className = "", subtitle, children, colored 
   );
 }
 
-function Hero() {
+function Hero({ leader = "guardians", isTie = false }) {
+  const grad = leader === "null" ? "from-rose-900/40 via-fuchsia-900/40 to-slate-900/40" : "from-purple-900/40 via-indigo-900/40 to-slate-900/40";
   return (
-    <div className="relative overflow-hidden bg-gradient-to-br from-purple-900/40 via-indigo-900/40 to-slate-900/40 rounded-3xl border border-white/10 p-6 md:p-10 mb-8">
+    <div className={`relative overflow-hidden bg-gradient-to-br ${grad} rounded-3xl border border-white/10 p-6 md:p-10 mb-8`}>
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
         <div>
           <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight">ChainWars Command Center</h1>
-          <p className="mt-3 text-sm md:text-base opacity-90 max-w-2xl">
-            Live status of the battle between the <span className="font-semibold">ChainGuardians</span> and <span className="font-semibold">The Null Order</span>. Track market caps, milestones, and lore unlocks in real time.
-          </p>
+          <div className="mt-1 text-xs opacity-80">{isTie ? "Tie — ChainGuardians theme" : (leader === "null" ? "Null Order currently leads" : "ChainGuardians currently lead")}</div>
           <div className="mt-4 flex flex-wrap items-center gap-2">
             <Badge className="bg-purple-600/40">SolaKnight featured</Badge>
             <Badge variant="outline">$SOLAK live</Badge>
@@ -134,7 +147,7 @@ function TokensSection({ onTotals }) {
       const updated = await Promise.all(
         tokens.map(async (t) => {
           if (t.status !== "live") return t;
-          const stats = await fetchPumpStats(t.address);
+          const stats = await fetchPumpStats(t.address, t.symbol);
           if (!stats) return t;
           return { ...t, priceUSD: stats.priceUsd ?? t.priceUSD, marketCapUSD: stats.marketCapUsd ?? t.marketCapUSD };
         })
@@ -285,10 +298,13 @@ function CommandCenterPage() {
   const [guardiansTotal, setGuardiansTotal] = useState(0);
   const [nullTotal, setNullTotal] = useState(0);
 
+  const isTie = guardiansTotal === nullTotal;
+  const leader = isTie ? "guardians" : (guardiansTotal > nullTotal ? "guardians" : "null");
+
   return (
     <main className="min-h-screen w-full bg-black text-white py-6 md:py-10">
       <div className="w-full max-w-6xl mx-auto px-4 md:px-6">
-        <Hero />
+        <Hero leader={leader} isTie={isTie} />
       </div>
       <div className="space-y-10">
         <TokensSection onTotals={(g, n) => { setGuardiansTotal(g); setNullTotal(n); }} />
