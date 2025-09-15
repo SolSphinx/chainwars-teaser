@@ -63,10 +63,10 @@ async function fetchPumpStats(mint, symbol) {
   }
 }
 
-function Section({ id, title, icon, className = "", subtitle, children, colored = false }) {
+function Section({ id, title, icon, className = "", subtitle, children, colored = false, theme = "guardians" }) {
   return (
     <section id={id} className={`w-full max-w-6xl mx-auto px-4 md:px-6 ${className}`}>
-      <div className={colored ? "relative overflow-hidden bg-gradient-to-br from-purple-900/25 via-indigo-900/25 to-slate-900/25 rounded-3xl border border-white/10 p-4 md:p-6" : ""}>
+      <div className={colored ? `relative overflow-hidden bg-gradient-to-br ${theme === "null" ? "from-rose-900/25 via-fuchsia-900/25 to-slate-900/25" : "from-purple-900/25 via-indigo-900/25 to-slate-900/25"} rounded-3xl border border-white/10 p-4 md:p-6` : ""}>
         <div className="flex items-end justify-between gap-4 mb-4">
           <div>
             <h2 className="text-2xl md:text-3xl font-bold flex items-center gap-2">
@@ -81,8 +81,8 @@ function Section({ id, title, icon, className = "", subtitle, children, colored 
   );
 }
 
-function Hero({ leader = "guardians", isTie = false }) {
-  const grad = leader === "null" ? "from-rose-900/40 via-fuchsia-900/40 to-slate-900/40" : "from-purple-900/40 via-indigo-900/40 to-slate-900/40";
+function Hero({ leader = "guardians", isTie = false, theme = "guardians", onToggleTheme }) {
+  const grad = theme === "null" ? "from-rose-900/40 via-fuchsia-900/40 to-slate-900/40" : "from-purple-900/40 via-indigo-900/40 to-slate-900/40";
   return (
     <div className={`relative overflow-hidden bg-gradient-to-br ${grad} rounded-3xl border border-white/10 p-6 md:p-10 mb-8`}>
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
@@ -98,6 +98,7 @@ function Hero({ leader = "guardians", isTie = false }) {
         <div className="flex items-center gap-3">
           <a href="#milestones"><Button className="rounded-2xl">View milestones</Button></a>
           <a href="#tokens"><Button variant="outline" className="rounded-2xl">Tokens</Button></a>
+          <Button variant="outline" className="rounded-2xl" onClick={onToggleTheme}>Theme</Button>
         </div>
       </div>
     </div>
@@ -139,7 +140,7 @@ function TokenCard({ t }) {
   );
 }
 
-function TokensSection({ onTotals }) {
+function TokensSection({ onTotals, theme = "guardians" }) {
   const [tokens, setTokens] = useState(INITIAL_TOKENS);
 
   useEffect(() => {
@@ -159,7 +160,7 @@ function TokensSection({ onTotals }) {
   }, []);
 
   return (
-    <Section id="tokens" title="Tokens" icon={<Sparkles className="w-6 h-6" />} subtitle="Live and upcoming tokens in the ChainWars saga." colored>
+    <Section id="tokens" title="Tokens" icon={<Sparkles className="w-6 h-6" />} subtitle="Live and upcoming tokens in the ChainWars saga." colored theme={theme}>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {tokens.filter((t) => !t.hidden).map((t) => <TokenCard key={t.symbol} t={t} />)}
       </div>
@@ -233,10 +234,10 @@ function Character({ name, side, locked, teaser }) {
   );
 }
 
-function LineupsSection() {
+function LineupsSection({ theme = "guardians" }) {
   const roster = DEFAULT_ROSTER;
   return (
-    <Section id="lineups" title="Lineups" icon={<Info className="w-6 h-6" />} subtitle="Locked/unlocked with detail modals." colored>
+    <Section id="lineups" title="Lineups" icon={<Info className="w-6 h-6" />} subtitle="Locked/unlocked with detail modals." colored theme={theme}>
       <Tabs defaultValue="guardians" className="w-full">
         <TabsList className="grid grid-cols-2 w-full">
           <TabsTrigger value="guardians">ChainGuardians</TabsTrigger>
@@ -262,10 +263,10 @@ function LineupsSection() {
 }
 
 // ---------------- Marketcap ----------------
-function MilestonesSection({ guardiansTotal = 0, nullTotal = 0 }) {
+function MilestonesSection({ guardiansTotal = 0, nullTotal = 0, theme = "guardians" }) {
   const fmt = (n) => (n && n > 0 ? `$${n.toLocaleString()}` : "—");
   return (
-    <Section id="milestones" title="Marketcap" icon={<Swords className="w-6 h-6" />} colored>
+    <Section id="milestones" title="Marketcap" icon={<Swords className="w-6 h-6" />} colored theme={theme}>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Card className="rounded-2xl">
           <CardHeader><CardTitle className="flex items-center gap-2"><Shield className="w-5 h-5" /> ChainGuardians</CardTitle></CardHeader>
@@ -298,18 +299,28 @@ function CommandCenterPage() {
   const [guardiansTotal, setGuardiansTotal] = useState(0);
   const [nullTotal, setNullTotal] = useState(0);
 
+  const [themeOverride, setThemeOverride] = useState(null);
+
   const isTie = guardiansTotal === nullTotal;
   const leader = isTie ? "guardians" : (guardiansTotal > nullTotal ? "guardians" : "null");
+
+  const effectiveTheme = themeOverride ?? (isTie ? "guardians" : leader);
+  const toggleTheme = () => {
+    setThemeOverride(prev => {
+      const current = prev ?? (isTie ? "guardians" : leader);
+      return current === "guardians" ? "null" : "guardians";
+    });
+  };
 
   return (
     <main className="min-h-screen w-full bg-black text-white py-6 md:py-10">
       <div className="w-full max-w-6xl mx-auto px-4 md:px-6">
-        <Hero leader={leader} isTie={isTie} />
+        <Hero leader={leader} isTie={isTie} theme={effectiveTheme} onToggleTheme={toggleTheme} />
       </div>
       <div className="space-y-10">
-        <TokensSection onTotals={(g, n) => { setGuardiansTotal(g); setNullTotal(n); }} />
-        <MilestonesSection guardiansTotal={guardiansTotal} nullTotal={nullTotal} />
-        <LineupsSection />
+        <TokensSection onTotals={(g, n) => { setGuardiansTotal(g); setNullTotal(n); }} theme={effectiveTheme} />
+        <MilestonesSection guardiansTotal={guardiansTotal} nullTotal={nullTotal} theme={effectiveTheme} />
+        <LineupsSection theme={effectiveTheme} />
       </div>
       <Footer />
     </main>
