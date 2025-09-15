@@ -12,7 +12,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card"
 import { Badge } from "../components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../components/ui/dialog";
-import { Lock, Unlock, Info, Sparkles, Shield, Swords, BarChart3 } from "lucide-react";
+import { Lock, Unlock, Info, Sparkles, Shield, Swords, BarChart3, BookOpen } from "lucide-react";
 import { sumMarketcapBySide, isPlaceholderMint } from "../lib/helpers";
 
 const PUMP_BASE = "https://pump.fun";
@@ -88,7 +88,7 @@ function Hero({ leader = "guardians", isTie = false, theme = "guardians", onTogg
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
         <div>
           <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight">ChainWars Command Center</h1>
-          <div className="mt-1 text-xs opacity-80">{isTie ? "Tie — ChainGuardians theme" : (leader === "null" ? "Null Order currently leads" : "ChainGuardians currently lead")}</div>
+          {!isTie && <div className="mt-1 text-xs opacity-80">{leader === "null" ? "Null Order currently leads" : "ChainGuardians currently lead"}</div>}
           <div className="mt-4 flex flex-wrap items-center gap-2">
             <Badge className="bg-purple-600/40">SolaKnight featured</Badge>
             <Badge variant="outline">$SOLAK live</Badge>
@@ -137,6 +137,60 @@ function TokenCard({ t }) {
         </div>
       </CardContent>
     </Card>
+  );
+}
+
+function LoreSection({ theme = "guardians" }) {
+  const items = [
+    {
+      id: "solana",
+      title: "Solana Universe",
+      short: "A fast, permissionless world where shards of power — tokens — shape influence. Factions clash over blockspace and belief.",
+      long: "Blocks stream like solar winds. Validators keep time; builders wield programs; communities rally behind symbols. In this expanse, every transaction is a footstep in the saga, and every token a banner raised."
+    },
+    {
+      id: "guardians",
+      title: "ChainGuardians",
+      short: "Defenders of openness and speed, sworn to keep the network free and fair.",
+      long: "From the first sparks of the chain, the Guardians stood against capture. Champions like SolaKnight ride the beam to shield users, while future heroes ready their sigils. New chapters appear as milestones are met and heroes awaken."
+    },
+    {
+      id: "null",
+      title: "The Null Order",
+      short: "A cabal seeking control through congestion, fees, and central choke points.",
+      long: "In the shadows between slots, the Null weave plans to slow the chain and tighten their grasp. Their edicts spread doubt and delay. As achievements unlock, deeper motives and agents of the Order will be revealed."
+    }
+  ];
+
+  return (
+    <Section id="lore" title="Lore" icon={<BookOpen className="w-6 h-6" />} subtitle="Browse the known canon. Expands with achievements and hero unlocks." colored theme={theme}>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {items.map((item) => (
+          <Card key={item.id} className="rounded-2xl">
+            <CardHeader>
+              <CardTitle>{item.title}</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <p className="text-sm opacity-80">{item.short}</p>
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button className="rounded-xl">Current Lore</Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>{item.title}</DialogTitle>
+                  </DialogHeader>
+                  <div className="text-sm space-y-3">
+                    <p>{item.long}</p>
+                    <p className="text-xs opacity-70">This section grows as achievements are reached.</p>
+                  </div>
+                </DialogContent>
+              </Dialog>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+    </Section>
   );
 }
 
@@ -318,6 +372,7 @@ function CommandCenterPage() {
         <Hero leader={leader} isTie={isTie} theme={effectiveTheme} onToggleTheme={toggleTheme} />
       </div>
       <div className="space-y-10">
+        <LoreSection theme={effectiveTheme} />
         <TokensSection onTotals={(g, n) => { setGuardiansTotal(g); setNullTotal(n); }} theme={effectiveTheme} />
         <MilestonesSection guardiansTotal={guardiansTotal} nullTotal={nullTotal} theme={effectiveTheme} />
         <LineupsSection theme={effectiveTheme} />
