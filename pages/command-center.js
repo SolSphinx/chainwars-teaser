@@ -242,7 +242,7 @@ const DEFAULT_ROSTER = {
   ],
 };
 
-function Character({ name, side, locked, teaser }) {
+function Character({ id, name, side, locked, teaser }) {
   const publicName = locked ? "???" : name;
   const publicTeaser = locked ? "Hidden until a milestone is reached." : teaser;
 
@@ -259,7 +259,14 @@ function Character({ name, side, locked, teaser }) {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <Dialog>
+          {!locked && id === "solaknight" && (
+            <div className="mb-3 flex justify-center">
+              <div className="relative w-24 h-24 md:w-28 md:h-28 rounded-xl overflow-hidden border border-white/10">
+                <Image src="/heroes/solaknight.png" alt="SolaKnight" fill className="object-cover" />
+              </div>
+            </div>
+          )}
+          <Dialog>
           <DialogTrigger asChild>
             <Button variant="outline" className="rounded-xl w-full">{locked ? "Locked" : "View details"}</Button>
           </DialogTrigger>
@@ -300,14 +307,14 @@ function LineupsSection({ theme = "guardians" }) {
         <TabsContent value="guardians" className="mt-4">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {roster.guardians.map((c) => (
-              <Character key={c.id} name={c.name} side={c.side} locked={c.locked} teaser={c.teaser} />
+              <Character key={c.id} id={c.id} name={c.name} side={c.side} locked={c.locked} teaser={c.teaser} />
             ))}
           </div>
         </TabsContent>
         <TabsContent value="null" className="mt-4">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {roster.nulls.map((c) => (
-              <Character key={c.id} name={c.name} side={c.side} locked={c.locked} teaser={c.teaser} />
+              <Character key={c.id} id={c.id} name={c.name} side={c.side} locked={c.locked} teaser={c.teaser} />
             ))}
           </div>
         </TabsContent>
