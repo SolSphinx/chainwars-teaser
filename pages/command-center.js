@@ -167,26 +167,28 @@ function LoreSection({ theme = "guardians" }) {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {items.map((item) => (
           <Card key={item.id} className="rounded-2xl">
-            <CardHeader>
-              <CardTitle>{item.title}</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <p className="text-sm opacity-80">{item.short}</p>
-              <Dialog>
-                <DialogTrigger asChild>
-                  <Button className="rounded-xl">Current Lore</Button>
-                </DialogTrigger>
-                <DialogContent>
-                  <DialogHeader>
-                    <DialogTitle>{item.title}</DialogTitle>
-                  </DialogHeader>
-                  <div className="text-sm space-y-3">
-                    <p>{item.long}</p>
-                    <p className="text-xs opacity-70">This section grows as achievements are reached.</p>
-                  </div>
-                </DialogContent>
-              </Dialog>
-            </CardContent>
+            <Dialog>
+              <DialogTrigger asChild>
+                <button className="w-full text-left">
+                  <CardHeader className="cursor-pointer hover:bg-white/5 rounded-xl transition-colors">
+                    <CardTitle className="flex items-center justify-between">
+                      <span>{item.title}</span>
+                      <span className="text-xs opacity-70">Open</span>
+                    </CardTitle>
+                  </CardHeader>
+                </button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>{item.title}</DialogTitle>
+                </DialogHeader>
+                <div className="text-sm space-y-3">
+                  <p className="opacity-80">{item.short}</p>
+                  <p>{item.long}</p>
+                  <p className="text-xs opacity-70">This section grows as achievements are reached.</p>
+                </div>
+              </DialogContent>
+            </Dialog>
           </Card>
         ))}
       </div>
