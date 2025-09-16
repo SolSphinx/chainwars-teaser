@@ -35,16 +35,18 @@ export default function TeaserPage() {
       </Head>
       <main className="min-h-screen w-full bg-black text-white">
         <div className="relative mx-auto max-w-4xl px-6 py-16 md:py-24 text-center">
-          {/* Logo image */}
-          <div className="relative mx-auto h-24 w-[420px] md:h-32 md:w-[560px]">
-            <Image
-              src="/brand/chainwars_logo.png"
-              alt="ChainWars"
-              fill
-              className="object-contain drop-shadow-2xl"
-              priority
-            />
-          </div>
+          {/* Logo image (volledige breedte van de content) */}
+<div className="mx-auto w-full max-w-3xl">
+  <Image
+    src="/brand/chainwars_logo.png"
+    alt="ChainWars"
+    width={1600}
+    height={400}
+    className="w-full h-auto object-contain drop-shadow-2xl"
+    priority
+  />
+</div>
+
 
           {/* Tagline */}
           <p className="mt-4 text-base md:text-lg italic opacity-90">
